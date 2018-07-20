@@ -1,5 +1,7 @@
-var redis = require("redis"),
-    client = redis.createClient();
+'use strict'
+
+var redis = require('redis');
+var client = redis.createClient();
 
 
 function data() {
@@ -14,3 +16,4 @@ function data() {
 function test() {
     return "Hello";
 };
+console.log("Redis client = " + client);
