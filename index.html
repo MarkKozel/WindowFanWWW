@@ -11,41 +11,28 @@
 
 <body>
 
-    <script type="text/javascript" src="./bundle.js"></script>
+    <script type="text/javascript" src="./redisData.js"></script>
 
     <div class="page-header">
         <h1>Wind Fan Page <br><small>Controls and Data</small></h1>
     </div>
 
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">Daily Weather</h3>
-        </div>
-        <div class="panel-body">
-            Panel content:
-            <script type="text/javascript">
-                document.write(data())
-            </script>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-15 mx-auto text-center bg-primary mt-5 p-5 rounded">
+                <ul id="daily-details" class="list-group mt-3">
+                    <li class="list-group-item" id="daily-min-humidity"></li>
+                    <li class="list-group-item" id="daily-max-humidity"></li>
+                    <li class="list-group-item" id="daily-min-tempurature"></li>
+                    <li class="list-group-item" id="daily-max-tempurature"></li>
+                </ul>
+
+            </div>
+
         </div>
     </div>
 
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">Hourly Weather</h3>
-        </div>
-        <div class="panel-body">
-            Panel content
-        </div>
-    </div>
-
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">Minutly Weather</h3>
-        </div>
-        <div class="panel-body">
-            Panel content
-        </div>
-    </div>
 
 
     <!-- jQuery library -->
