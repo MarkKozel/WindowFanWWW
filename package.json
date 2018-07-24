@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "browserify redisData.js -o bundle.js"
+        "run": "node redisData.js"
     },
     "repository": {
         "type": "git",
