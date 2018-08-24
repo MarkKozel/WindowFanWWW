@@ -8,16 +8,18 @@
 // Setup websocket with callbacks.
 // Open the connection with the server.
 
-var OneDayMin = "Sensor/22/Temp/1DayMin";
-var OneDayMinDisplay = document.getElementById('daily-min-tempurature');
+var OneDayMin = "Sensor/Minute";
+var OneDayMinDisplay = document.getElementById('daily-raw-data');
 
-var ws = new WebSocket('ws://192.168.1.249:3123/');
+var ws = new WebSocket('ws://192.168.1.248:3123/');
 
 ws.onmessage = function(evt) {
     // var OneDayMinDisplay = document.getElementById('daily-min-tempurature');
-    var msgReceived = evt.data;
+    var msgReceived = JSON.parse(evt.data);
     console.log("Websocket server responds: " + msgReceived);
-    this.OneDayMinDisplay.innerHTML = `<b>1 Day Min Temp:</b> ${msgReceived}`;
+    for (var x = 0; x < msgReceived.length; x++) {
+        document.getElementById('daily-raw-data').value = msgReceived[x].Timestamp;
+    }
 };
 
 // As soon as the connection is closed, we inform the user.
@@ -33,7 +35,7 @@ ws.onopen = function() {
 
 display = function() {
 
-    this.OneDayMinDisplay.innerHTML = `<b>1 Day Min Temp:</b> <i>reading</i>`;
+    // this.OneDayMinDisplay.innerHTML = `<b>1 Day Min Temp:</b> <i>reading</i>`;
 
     if (ws.readyState === ws.OPEN) {
         ws.send(OneDayMin);
