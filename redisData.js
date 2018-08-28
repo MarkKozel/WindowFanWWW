@@ -14,12 +14,28 @@ var OneDayMinDisplay = document.getElementById('daily-raw-data');
 var ws = new WebSocket('ws://192.168.1.248:3123/');
 
 ws.onmessage = function(evt) {
-    // var OneDayMinDisplay = document.getElementById('daily-min-tempurature');
-    var msgReceived = JSON.parse(evt.data);
-    console.log("Websocket server responds: " + msgReceived);
-    for (var x = 0; x < msgReceived.length; x++) {
-        document.getElementById('daily-raw-data').value = msgReceived[x].Timestamp;
+    var output = '';
+    var msgReceivedObj = JSON.parse(evt.data);
+    console.log("Websocket server responds: " + msgReceivedObj);
+    for (var x = 0; x < msgReceivedObj.length; x++) {
+        lineObj = JSON.parse(msgReceivedObj[x]);
+        //var ts = new Date(lineObj.Timestamp);
+
+        var hour = lineObj.Timestamp.substring(11, 13);
+        var minute = lineObj.Timestamp.substring(14, 16);
+        var inTemp = Number.parseFloat(lineObj.IndoorTemp).toPrecision(3);
+        var inRh = Number.parseFloat(lineObj.IndoorRH).toPrecision(3);
+        var outTemp = Number.parseFloat(lineObj.OutdoorTemp).toPrecision(3);
+        var outRh = Number.parseFloat(lineObj.OutdoorRH).toPrecision(3);
+
+        output += `${hour}:${minute} indoors (${inTemp}F/${inRh}%)   outdoors (${outTemp}F/${outRh}%)` + '\n';
+
+        // output += ts.getHours() + ":" + ts.getMinutes() +
+        //     ' indoors(' + inTemp + 'F ' + inRh + '%' + ')' + " " +
+        //     ' outdoors(' + outTemp + 'F ' + outRh + '%' + ')\n';
+        // var ts = dataObj.IndoorRH;
     }
+    document.getElementById('daily-raw-data').value = output;
 };
 
 // As soon as the connection is closed, we inform the user.
