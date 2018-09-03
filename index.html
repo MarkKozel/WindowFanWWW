@@ -10,8 +10,8 @@
 </head>
 
 <body>
-
-    <script type="text/javascript" src="./redisData.js"></script>
+    <!-- 
+    <script type="text/javascript" src="./redisData.js"></script> -->
 
     <div class="page-header">
         <h1>Wind Fan Page <br><small>Controls and Data</small></h1>
@@ -20,16 +20,8 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- <div class="col-md-15 mx-auto text-center bg-primary mt-5 p-5 rounded">
-                <ul id="daily-summary" class="list-group mt-3">
-                    <li class="list-group-item" id="daily-min-humidity"></li>
-                    <li class="list-group-item" id="daily-max-humidity"></li>
-                    <li class="list-group-item" id="daily-min-tempurature"></li>
-                    <li class="list-group-item" id="daily-max-tempurature"></li>
-                </ul>
 
-            </div> -->
-            <div class="col-md-15 mx-auto text-center bg-primary mt-5 p-5 rounded">
+            <div id="minute-data-block" class="col-md-15 mx-auto text-center bg-primary mt-5 p-5 rounded">
                 <h1>Minute Sensor Data</h1>
 
                 <p id="minute-data-as-of"></p>
@@ -52,14 +44,52 @@
                     <tbody>
                         <tr>
                         </tr>
-
                     </tbody>
-                    <!-- <textarea id="minute-raw-data" rows="32" cols="75"></textarea> -->
+                </table>
+            </div>
 
+
+
+
+
+            <div id="hour-data-block" class="col-md-15 mx-auto text-center bg-primary mt-5 p-5 rounded">
+                <h1>Hour Sensor Data</h1>
+
+                <p id="hour-data-as-of"></p>
+                <div class="row">
+                    <p class="col" id="hour-current-temp-in"></p>
+                    <p class="col" id="hour-current-rh-in"></p>
+                </div>
+                <div class="row">
+                    <p class="col" id="hour-current-temp-out"></p>
+                    <p class="col" id="hour-current-rh-out"></p>
+                </div>
+                <div class="row">
+                    <p class="col" id="hour-current-temp-max-out"></p>
+                    <p class="col" id="hour-current-temp-min-out"></p>
+                </div>
+                <div class="row">
+                    <p class="col" id="hour-current-temp-max-in"></p>
+                    <p class="col" id="hour-current-temp-min-in"></p>
+                </div>
+                <table class="table table-striped table-sm" id="hour-raw-data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Day/Hour</th>
+                            <th scope="col">Indoor</th>
+                            <th scope="col">Outdoor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
         </div>
     </div>
+
 
 
 
@@ -68,6 +98,11 @@
 
     <!-- Latest compiled JavaScript -->
     <script src="./node_modules/bootstrap/dist/js/bootstrap.js"></script>
+
+    <script src="utilities.js"></script>
+    <script src="minuteData.js"></script>
+    <script src="hourData.js"></script>
+    <script src="redisData.js"></script>
 </body>
 
 
