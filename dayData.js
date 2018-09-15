@@ -1,18 +1,22 @@
 /**
  * Class to interface with Redis data server, request data, and populate html elements
  */
-class processMinuteData {
+class processDayData {
     constructor() {
-        this.table = document.getElementById("minute-raw-data-table");
+        this.table = document.getElementById("day-raw-data-table");
 
-        this.MinueDataAsOf = document.getElementById('minute-data-as-of');
+        this.DayDataAsOf = document.getElementById('day-data-as-of');
 
-        this.MinuteCurTempIn = document.getElementById('minute-current-temp-in');
-        this.MinuteCurRhIn = document.getElementById('minute-current-rh-in');
-        this.MinuteCurTempOut = document.getElementById('minute-current-temp-out');
-        this.MinuteCurRhOut = document.getElementById('minute-current-rh-out');
+        this.DayCurTempIn = document.getElementById('day-current-temp-in');
+        this.DayCurRhIn = document.getElementById('day-current-rh-in');
+        this.DayCurTempOut = document.getElementById('day-current-temp-out');
+        this.DayCurRhOut = document.getElementById('day-current-rh-out');
+        this.DayCurTempMaxOut = document.getElementById('day-current-temp-max-out');
+        this.DayCurTempMinOut = document.getElementById('day-current-temp-min-out');
+        this.DayCurTempMaxIn = document.getElementById('day-current-temp-max-in');
+        this.DayCurTempMinIn = document.getElementById('day-current-temp-min-in');
 
-        this.RedisKey = "Sensor/Minute";
+        this.RedisKey = "Sensor/Day";
 
         this.ws = new WebSocket('ws://192.168.1.248:3123/');
         this.ws.onmessage = this.wsonmessage.bind(this);
@@ -22,7 +26,7 @@ class processMinuteData {
         this.currentData = new Map();
 
         this.utils = new utilities();
-    }
+    };
 
     /**
      * Verifies that data returned is for this handler/type
@@ -31,10 +35,10 @@ class processMinuteData {
     wsonmessage(evt) {
         var type = utils.determineData(evt.data);
 
-        if (type === "minute") {
+        if (type === "day") {
             this.display(evt.data);
         } else {
-            console.log("MinuteData() Rec'd unknown data:");
+            console.log("DayData() Rec'd unknown data:");
             //console.log(evt.data);
         }
 
@@ -51,6 +55,7 @@ class processMinuteData {
         console.log(`Connected to server with ${this.ws.protocol} connection`);
     };
 
+
     /**
      * Request data from Redis server if connected
      */
@@ -64,73 +69,87 @@ class processMinuteData {
 
     /**
      * Extracts JSON data, finds stats for the data, and pushed out to html elements
-     * @param {JSON} minuteData weather data for this type
+     * @param {JSON} dayData weather data for this type
      */
-    display(minuteData) {
-        var msgReceivedObj = JSON.parse(minuteData);
+    display(dayData) {
+        var msgReceivedObj = JSON.parse(dayData);
 
-        var curHour = -1;
-        var curMin = -1;
+        var curDay = -1;
+        var curMonth = -1;
 
         var theTime;
 
         var cIndex = -1;
-        var cHour = -1;
-        var cMin = -1;
+        var cDay = -1;
+        var cMonth = -1;
 
         var currentTempIn = -1;
         var currentRhIn = -1;
         var currentTempOut = -1;
         var currentRhOut = -1;
 
+        var currentTempMaxOut = -1;
+        var currentTempMinOut = -1;
+        var currentTempMaxIn = -1;
+        var currentTempMinIn = -1;
+
         var lineObj;
 
         //Find current line
         var cIndex = -1;
-        var cHour = -1;
-        var cMin = -1;
+        var cMonth = -1;
+        var cDay = -1;
+
         for (var x = 0; x < msgReceivedObj.length; x++) {
             lineObj = JSON.parse(msgReceivedObj[x]);
-            // var hour = parseInt(lineObj.Timestamp.substring(11, 13));
-            // var minute = parseInt(lineObj.Timestamp.substring(14, 16));
-
             var theDate = new Date(lineObj.Timestamp);
-            var minute = theDate.getMinutes();
-            var hour = theDate.getHours();
+            var day = theDate.getDate();
+            var month = theDate.getMonth();
 
             this.currentData.set(this.utils.dateIndex(theDate), lineObj);
 
-            if ((hour >= cHour) && (minute > cMin)) {
+            if ((month >= cMonth) && (day > cDay)) {
                 cIndex = this.utils.dateIndex(theDate);
-                cHour = hour;
-                cMin = minute;
+                cDay = day;
+                cMonth = month;
             }
+
         }
 
-        $('#minute-raw-data-table > tr > td').remove();
+        $('#day-raw-data-table > tr > td').remove();
 
+        // for (var x = 0; x < msgReceivedObj.length; x++) {
+        //     lineObj = JSON.parse(msgReceivedObj[x]);
         var iterator1 = this.currentData[Symbol.iterator]();
 
         for (let item of iterator1) {
-
             var theDate = new Date(item[1].Timestamp);
-
-            var hour = theDate.getHours();
-            var minute = theDate.getMinutes();
+            var day = theDate.getDate();
+            var month = theDate.getMonth();
 
             var inTemp = Number.parseFloat(item[1].IndoorTemp).toPrecision(3);
             var inRh = Number.parseFloat(item[1].IndoorRH).toPrecision(3);
             var outTemp = Number.parseFloat(item[1].OutdoorTemp).toPrecision(3);
             var outRh = Number.parseFloat(item[1].OutdoorRH).toPrecision(3);
 
-            if ((hour >= curHour) && (minute > curMin)) {
+            var outMaxTemp = Number.parseFloat(item[1].OutdoorTempMax).toPrecision(3);
+            var outminTemp = Number.parseFloat(item[1].OutdoorTempMin).toPrecision(3);
+            var inMaxTemp = Number.parseFloat(item[1].IndoorTempMax).toPrecision(3);
+            var inMinTemp = Number.parseFloat(item[1].IndoorTempMin).toPrecision(3);
+
+            if ((month >= curMonth) && (day > curDay)) {
                 currentTempIn = inTemp;
                 currentRhIn = inRh;
                 currentTempOut = outTemp;
                 currentRhOut = outRh;
 
-                curHour = hour;
-                curMin = minute;
+                currentTempMaxOut = outMaxTemp;
+                currentTempMinOut = outminTemp;
+                currentTempMaxIn = inMaxTemp;
+                currentTempMinIn = inMinTemp;
+
+                curDay = day;
+                curMonth = month
             }
 
             var tr = document.createElement("tr");
@@ -144,10 +163,10 @@ class processMinuteData {
                 td3.className = "table-primary";
             }
 
-            if (hour > 12) {
-                theTime = `${this.utils.pad(hour-12,2)}:${this.utils.pad(minute,2)} am`;
+            if (day > 12) {
+                theTime = `${this.utils.pad(day,2)}/${this.utils.pad(day - 12,2)} am`;
             } else {
-                theTime = `${this.utils.pad(hour,2)}:${this.utils.pad(minute,2)} pm`;
+                theTime = `${this.utils.pad(day,2)}/${this.utils.pad(day,2)}pm`;
             }
 
             td1.appendChild(document.createTextNode(`${theTime}`));
@@ -159,16 +178,20 @@ class processMinuteData {
             this.table.appendChild(tr);
 
         }
-        if (this.curHour > 12) {
-            theTime = `${this.utils.pad(curHour - 12),2}:${this.utils.pad(curMin,2)} pm`;
-        } else {
-            theTime = `${this.utils.pad(curHour,2)}:${this.utils.pad(curMin,2)} pm`;
-        }
-        this.MinueDataAsOf.innerHTML = `<b>as of</b> ${theTime}`;
 
-        this.MinuteCurTempIn.innerText = `Current  Indoor Temp: ${currentTempIn}F`;
-        this.MinuteCurRhIn.innerText = `Current  Indoor RelH: ${currentRhIn}%`;
-        this.MinuteCurTempOut.innerText = `Current Outdoor Temp: ${currentTempOut}F`;
-        this.MinuteCurRhOut.innerText = `Current Outdoor RelH: ${currentRhOut}%`;
+        theTime = `${this.utils.pad(curMonth,2)}/${this.utils.pad(curDay,2)} - ${this.utils.pad(curDay,2)} pm`;
+
+        this.DayDataAsOf.innerHTML = `<b>as of</b> ${theTime}`;
+
+        this.DayCurTempIn.innerText = `Current  Indoor Temp: ${currentTempIn}F`;
+        this.DayCurRhIn.innerText = `Current  Indoor RelH: ${currentRhIn}%`;
+        this.DayCurTempOut.innerText = `Current Outdoor Temp: ${currentTempOut}F`;
+        this.DayCurRhOut.innerText = `Current Outdoor RelH: ${currentRhOut}%`;
+
+        this.DayCurTempMaxOut.innerText = `Current Outdoor High: ${currentTempMaxOut}F`;
+        this.DayCurTempMinOut.innerText = `Current Outdoor Low: ${currentTempMinOut}F`;
+
+        this.DayCurTempMaxIn.innerText = `Current Indoor High: ${currentTempMaxIn}F`;
+        this.DayCurTempMinIn.innerText = `Current Indoor Low: ${currentTempMinIn}F`;
     }
 }

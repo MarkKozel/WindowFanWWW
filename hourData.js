@@ -1,3 +1,6 @@
+/**
+ * Class to interface with Redis data server, request data, and populate html elements
+ */
 class processHourData {
     constructor() {
         this.table = document.getElementById("hour-raw-data-table");
@@ -23,8 +26,12 @@ class processHourData {
         this.currentData = new Map();
 
         this.utils = new utilities();
-    }
+    };
 
+    /**
+     * Verifies that data returned is for this handler/type
+     * @param {JSON} evt weather data
+     */
     wsonmessage(evt) {
         var type = utils.determineData(evt.data);
 
@@ -48,14 +55,21 @@ class processHourData {
         console.log(`Connected to server with ${this.ws.protocol} connection`);
     };
 
-
+    /**
+     * Request data from Redis server if connected
+     */
     getData() {
         if (this.ws.readyState === this.ws.OPEN) {
             this.ws.send(this.RedisKey);
         } else {
             console.log("Connection not open yet, try again");
         }
-    }
+    };
+
+    /**
+     * Extracts JSON data, finds stats for the data, and pushed out to html elements
+     * @param {JSON} hourData weather data for this type
+     */
     display(hourData) {
         var msgReceivedObj = JSON.parse(hourData);
 
@@ -155,7 +169,7 @@ class processHourData {
             }
 
             if (hour > 12) {
-                theTime = `${this.utils.pad(day,2)}/${this.utils.pad(hour - 12,2)} pm`;
+                theTime = `${this.utils.pad(day,2)}/${this.utils.pad(hour - 12,2)} am`;
             } else {
                 theTime = `${this.utils.pad(day,2)}/${this.utils.pad(hour,2)}pm`;
             }

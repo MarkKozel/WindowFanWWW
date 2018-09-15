@@ -1,7 +1,11 @@
+/**
+ * misc functions
+ */
 class utilities {
     constructor() {
 
-    }
+    };
+
     dateIndex(dateObj) {
         var result = '';
 
@@ -24,6 +28,10 @@ class utilities {
 
         return result;
     };
+
+    /**
+     * Pads theString with zeroPadding leading zeros
+     */
     pad(theString, zeroPadding) {
         var result = "";
         var newLength = zeroPadding - theString.toString().length;
@@ -34,27 +42,38 @@ class utilities {
     }
 
 
+    /**
+     * Uses timestamp data element to determine what time part is changing. That decides which
+     * type the data represents
+     */
     determineData(data) {
         var msgReceivedObj = JSON.parse(data);
 
-        var lineObj0 = JSON.parse(msgReceivedObj[0]);
-        var lineObj1 = JSON.parse(msgReceivedObj[1]);
-        var lineObj2 = JSON.parse(msgReceivedObj[2]);
+        var theDate0 = new Date(JSON.parse(msgReceivedObj[0]).Timestamp);
+        var theDate1 = new Date(JSON.parse(msgReceivedObj[1]).Timestamp);
+        var theDate2 = new Date(JSON.parse(msgReceivedObj[2]).Timestamp);
 
-        var hour0 = parseInt(lineObj0.Timestamp.substring(11, 13));
-        var minute0 = parseInt(lineObj0.Timestamp.substring(14, 16));
-        var hour1 = parseInt(lineObj1.Timestamp.substring(11, 13));
-        var minute1 = parseInt(lineObj1.Timestamp.substring(14, 16));
-        var hour2 = parseInt(lineObj2.Timestamp.substring(11, 13));
-        var minute2 = parseInt(lineObj2.Timestamp.substring(14, 16));
+        var times = new Array(3);
+        for (var x = 0; x < 3; x++) {
+            var theDate = new Date(JSON.parse(msgReceivedObj[x]).Timestamp);
+            times[x] = new Array(3);
+            times[x]["day"] = theDate.getDay();
+            times[x]["hour"] = theDate.getHours();
+            times[x]["minute"] = theDate.getMinutes();
 
-        if ((parseInt(hour0) < parseInt(hour1)) || (parseInt(hour1) < parseInt(hour2))) {
-            return "hour";
+        }
+
+        if ((times[0]['day'] < times[1]['day']) || (times[1]['day'] < times[2]['day'])) {
+            return "day";
         } else {
-            if ((parseInt(minute0) < parseInt(minute1)) || (parseInt(minute1) < parseInt(minute2))) {
-                return "minute";
+            if ((times[0]['hour'] < times[1]['hour']) || (times[1]['hour'] < times[2]['hour'])) {
+                return "hour";
             } else {
-                return "unknown";
+                if ((times[0]['minute'] < times[1]['minute']) || (times[1]['minute'] < times[2]['minute'])) {
+                    return "minute";
+                } else {
+                    return "unknown";
+                }
             }
         }
     };

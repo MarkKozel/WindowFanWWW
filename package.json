@@ -20,7 +20,8 @@
     "dependencies": {
         "bootstrap": "^4.1.2",
         "jquery": "^3.3.1",
-        "websocket": "^1.0.26"
+        "websocket": "^1.0.26",
+        "redis": "2.8.0"
     },
     "devDependencies": {
         "eslint": "^5.2.0",
